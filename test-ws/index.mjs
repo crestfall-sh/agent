@@ -8,12 +8,22 @@ const app = uws.App({});
 app.ws('/*', {
   open: (ws) => {
     console.log('uws: open');
-    ws.send('Hello');
+    ws.send('HELLO');
   },
   message: (ws, message, is_binary) => {
     console.log('uws: message');
     if (is_binary === false) {
-      console.log(Buffer.from(message).toString(), is_binary);
+      const message_text = Buffer.from(message).toString();
+      console.log(message_text, is_binary);
+      switch (message_text) {
+        case 'HI': {
+          ws.send(JSON.stringify({ type: 'TEST' }));
+          break;
+        }
+        default: {
+          break;
+        }
+      }
     } else {
       console.log(Buffer.from(message));
     }

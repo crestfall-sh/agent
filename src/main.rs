@@ -18,7 +18,7 @@ use tokio_tungstenite::{
 };
 
 #[tokio::main]
-async fn test2() {
+async fn test2() -> Result<()>{
 
     let url = url::Url::parse("ws://localhost:8080/").unwrap();
 
@@ -29,13 +29,26 @@ async fn test2() {
     println!("Message received.");
     println!("{:?}", hello.into_text().unwrap());
 
-    let hi = Message::Text("Hi".into());
+    let hi = Message::Text("HI".into());
     socket.send(hi).await.expect("Message send failed.");
     println!("Message sent.");
 
+
+    while let Some(msg) = socket.next().await {
+        let message = msg?;
+        if message.is_text() == true {
+            let message_text = message.into_text().unwrap();
+            println!("{:?}", message_text);
+            let response = Message::Text("TEST".into());
+            socket.send(response).await?;
+        }
+    }
+    Ok(())
+
 }
 
-fn main() {
+fn main() -> Result<()> {
     test();
-    test2();
+    test2()?;
+    Ok(())
 }
