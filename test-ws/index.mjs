@@ -8,11 +8,14 @@ const app = uws.App({});
 app.ws('/*', {
   open: (ws) => {
     console.log('uws: open');
+    ws.send('Hello');
   },
   message: (ws, message, is_binary) => {
     console.log('uws: message');
     if (is_binary === false) {
       console.log(Buffer.from(message).toString(), is_binary);
+    } else {
+      console.log(Buffer.from(message));
     }
   },
   close: (ws) => {

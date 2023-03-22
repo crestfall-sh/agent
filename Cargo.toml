@@ -8,5 +8,6 @@ edition = "2021"
 [dependencies]
 url = "2.3.1"
 bollard = "0.14.0"
+futures-util = "0.3.27"
 tokio-tungstenite = "0.18.0"
 tokio = { version = "1.26.0", features = ["full"] }

@@ -9,14 +9,30 @@ async fn test() {
     println!("{:?}", version);  
 }
 
-use tokio_tungstenite::{connect_async};
+use futures_util::{future, pin_mut, SinkExt, StreamExt};
+use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio_tungstenite::{
+    connect_async,
+    tungstenite::protocol::Message,
+    tungstenite::{Error, Result}
+};
 
 #[tokio::main]
 async fn test2() {
-    let asd = "ws://localhost:8080/";
-    let url = url::Url::parse(&asd).unwrap();
-    let (socket, _) = connect_async(url).await.expect("Connection failed.");
+
+    let url = url::Url::parse("ws://localhost:8080/").unwrap();
+
+    let (mut socket, _) = connect_async(url).await.expect("Connection failed.");
     println!("Connected.");
+
+    let hello = socket.next().await.unwrap().unwrap();
+    println!("Message received.");
+    println!("{:?}", hello.into_text().unwrap());
+
+    let hi = Message::Text("Hi".into());
+    socket.send(hi).await.expect("Message send failed.");
+    println!("Message sent.");
+
 }
 
 fn main() {
